@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Weight Calculator</title>
+</head>
+<body>
+    <h1>Gold Weight Calculator</h1>
+    <form method="POST" action="/" enctype="multipart/form-data">
+        <label for="stl_file">Upload an STL file:</label>
+        <input type="file" name="stl_file" accept=".stl" required><br><br>
+        
+        <label for="karat">Select Karat:</label>
+        <select name="karat" required>
+            <option value="9K">9 Karat</option>
+            <option value="14K">14 Karat</option>
+            <option value="18K">18 Karat</option>
+            <option value="21K">21 Karat</option>
+            <option value="22K">22 Karat</option>
+        </select><br><br>
+        
+        <input type="submit" value="Calculate Gold Weight">
+    </form>
+</body>
+</html>
