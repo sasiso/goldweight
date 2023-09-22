@@ -7,7 +7,10 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 # Define the directory where uploaded files will be stored temporarily
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = '/home/ec2-user/goldweight/uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    UPLOAD_FOLDER = 'uploads'
+
 ALLOWED_EXTENSIONS = {'stl'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
@@ -35,9 +38,8 @@ def calculate_gold_weight(stl_file_path, karat):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Get the uploaded file and selected karat from the form
+        # Get the uploaded file from the form
         stl_file = request.files["stl_file"]
-        selected_karat = request.form["karat"]
 
         # Check if the file extension is allowed
         if stl_file and '.' in stl_file.filename and stl_file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
@@ -48,15 +50,18 @@ def index():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             stl_file.save(file_path)
 
-            # Calculate the gold weight
-            gold_weight = calculate_gold_weight(file_path, selected_karat)
+            # Calculate gold weights for all karat values
+            gold_weights = {}
+            for karat, density in densities.items():
+                weight = calculate_gold_weight(file_path, karat)
+                if weight is not None:
+                    gold_weights[karat] = weight
 
             # Delete the file after calculation
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-            if gold_weight is not None:
-                return render_template("results.html", weight=gold_weight)
+            return render_template("results.html", gold_weights=gold_weights)
 
     return render_template("index.html")
 

@@ -7,7 +7,13 @@
 </head>
 <body>
     <h1>Gold Weight Results</h1>
-    <p>The weight of the gold is: {{ weight }} grams</p>
+    <p>Calculated gold weights for different karat values:</p>
+    
+    <ul>
+        {% for karat, weight in gold_weights.items() %}
+            <li>{{ karat }}: {{ weight }} grams</li>
+        {% endfor %}
+    </ul>
     
     <!-- You can add more information or formatting as needed -->
     
