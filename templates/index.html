@@ -1,20 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Gold Weight Calculator</title>
+    <!-- Reference local JavaScript files as modules -->
+    <script type="module" src="{{ url_for('static', filename='three.module.min.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='OrbitControls.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='stlloader.js') }}"></script>
 </head>
+
 <body>
     <h1>Gold Weight Calculator</h1>
-    <form method="POST" action="/" enctype="multipart/form-data">
-        <label for="stl_file">Upload an STL file:</label>
-        <input type="file" name="stl_file" accept=".stl" required><br><br>
-        
-        <!-- Replace the dropdown menu with a hidden input field -->
-        <input type="hidden" name="karat" value="18K">
-        
-        <input type="submit" value="Calculate Gold Weight">
+
+    <!-- File Upload Form -->
+    <form id="upload-form">
+        <input type="file" id="stl-file" accept=".stl">
     </form>
+
+    <!-- 3D Model Display -->
+    <div id="stl-container"></div>
+
+    <!-- Weight Display -->
+    <div id="weight-display"></div>
+
+    <script type="module">
+        import * as THREE from "{{ url_for('static', filename='three.module.min.js') }}";
+        import { OrbitControls } from "{{ url_for('static', filename='OrbitControls.js') }}";
+        import { STLLoader } from "{{ url_for('static', filename='stlloader.js') }}";
+
+        let container;
+        let camera, cameraTarget, scene, renderer, controls;
+
+        init();
+        animate();
+        const stlFileInput = document.getElementById('stl-file');
+        const stlContainer = document.getElementById('stl-container');
+
+        stlFileInput.addEventListener('change', function () {
+            const file = stlFileInput.files[0];
+            if (file) {
+                // Clear the existing objects from the scene
+                clearScene();
+
+                const loader = new STLLoader();
+                loader.load(URL.createObjectURL(file), function (geometry) {
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0xff9c7c,
+                        specular: 0x494949,
+                        shininess: 200
+                    });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+
+                    // Calculate the bounding box of the loaded geometry
+                    const boundingBox = new THREE.Box3().setFromObject(mesh);
+
+                    // Calculate the object's size based on the bounding box
+                    const objectSize = new THREE.Vector3();
+                    boundingBox.getSize(objectSize);
+
+                    // Define a minimum size threshold (adjust as needed)
+                    const minSizeThreshold = new THREE.Vector3(0.5, 0.5, 0.5);
+
+                    // Calculate the scale factor needed to meet the minimum size threshold
+                    const scaleFactor = minSizeThreshold.clone().divide(objectSize);
+
+                    // Apply the scale factor to the object
+                    mesh.scale.multiply(scaleFactor);
+
+                    // Customize position (if needed)
+                    mesh.position.set(0, 0, 0);
+                    mesh.rotation.set(-Math.PI / 2, 0, 0);
+
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+
+                    scene.add(mesh);
+                });
+            }
+        });
+
+        function init() {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
+            camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 15);
+            camera.position.set(3, 0.15, 3);
+
+            cameraTarget = new THREE.Vector3(0, -0.25, 0);
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x72645b);
+            scene.fog = new THREE.Fog(0x72645b, 2, 15);
+
+            // Ground
+            const plane = new THREE.Mesh(
+                new THREE.PlaneGeometry(40, 40),
+                new THREE.MeshPhongMaterial({ color: 0xcbcbcb, specular: 0x474747 })
+            );
+            plane.rotation.x = -Math.PI / 2;
+            plane.position.y = -0.5;
+            scene.add(plane);
+
+            plane.receiveShadow = true;
+
+            scene.add(new THREE.HemisphereLight(0x8d7c7c, 0x494966, 3));
+            addShadowedLight(1, 1, 1, 0xffffff, 3.5);
+            addShadowedLight(0.5, 1, -1, 0xffd500, 3);
+
+            // Add OrbitControls for mouse interaction
+            controls = new OrbitControls(camera, container);
+            controls.target.set(0, 0, 0);
+            controls.update();
+
+            // renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function clearScene() {
+            // Remove only mesh objects from the scene
+            scene.children.forEach((child) => {
+                if (child instanceof THREE.Mesh) {
+                    scene.remove(child);
+                }
+            });
+        }
+
+        function addShadowedLight(x, y, z, color, intensity) {
+            const directionalLight = new THREE.DirectionalLight(color, intensity);
+            directionalLight.position.set(x, y, z);
+            scene.add(directionalLight);
+
+            directionalLight.castShadow = true;
+
+            const d = 1;
+            directionalLight.shadow.camera.left = -d;
+            directionalLight.shadow.camera.right = d;
+            directionalLight.shadow.camera.top = d;
+            directionalLight.shadow.camera.bottom = -d;
+
+            directionalLight.shadow.camera.near = 1;
+            directionalLight.shadow.camera.far = 4;
+
+            directionalLight.shadow.bias = -0.002;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+
+        function render() {
+            const timer = Date.now() * 0.0005;
+            camera.position.x = Math.cos(timer) * 3;
+            camera.position.z = Math.sin(timer) * 3;
+            camera.lookAt(cameraTarget);
+            renderer.render(scene, camera);
+        }
+    </script>
 </body>
+
 </html>
