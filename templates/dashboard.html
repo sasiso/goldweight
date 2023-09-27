@@ -1,0 +1,106 @@
+<!-- Updated dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Add any CSS styles or links to external stylesheets here -->
+    <style>
+        /* CSS for 100x100 pixel image thumbnails */
+        .thumbnail {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* CSS for key and value pairs */
+        .key-value-pair {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Your Dashboard</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="job-retrieval">
+            <h2>Retrieve a Job</h2>
+            <form method="POST" action="/retrieve_job">
+                <label for="job_number">Enter Job Number:</label>
+                <input type="text" id="job_number" name="job_number" required>
+                <button type="submit">Retrieve Job</button>
+            </form>
+        </section>
+
+        <section id="job-submission">
+            <h2>Submit a Job</h2>
+            <form method="POST" action="/submit_job" enctype="multipart/form-data">
+                <!-- Text Fields for Job Submission -->
+                <div id="text-fields">
+                    <!-- You can add up to 20 text fields dynamically using JavaScript -->
+                </div>
+                
+                <!-- File Upload for Pictures (up to 10 images) -->
+                <input type="file" name="pictures[]" multiple accept="image/*" onchange="displayThumbnails()">
+                <div id="thumbnails">
+                    <!-- Thumbnails for uploaded pictures will appear here -->
+                </div>
+
+                <button type="button" onclick="addTextField()">Add Key-Value Pair</button>
+                <button type="submit">Submit Job</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <!-- Add footer content here -->
+    </footer>
+
+    <!-- JavaScript to add and display text fields and picture thumbnails -->
+    <script>
+        let textFieldCount = 0;
+
+        function addTextField() {
+            if (textFieldCount < 20) {
+                const textField = document.createElement("div");
+                textField.classList.add("key-value-pair");
+                textField.innerHTML = `
+                    <input type="text" name="key_${textFieldCount}" placeholder="Key">
+                    <input type="text" name="value_${textFieldCount}" placeholder="Value">
+                `;
+                document.getElementById("text-fields").appendChild(textField);
+                textFieldCount++;
+            }
+        }
+
+        // Function to display 100x100 pixel image thumbnails when selected
+        function displayThumbnails() {
+            const thumbnails = document.getElementById("thumbnails");
+            thumbnails.innerHTML = ""; // Clear previous thumbnails
+
+            const files = document.querySelector('input[name="pictures[]"]').files;
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type.startsWith("image/")) {
+                    const thumbnail = document.createElement("img");
+                    thumbnail.src = URL.createObjectURL(files[i]);
+                    thumbnail.alt = "Thumbnail";
+                    thumbnail.classList.add("thumbnail");
+                    thumbnails.appendChild(thumbnail);
+                }
+            }
+        }
+
+        // Automatically display thumbnails when page loads
+        window.onload = () => {
+            displayThumbnails();
+        };
+    </script>
+</body>
+</html>

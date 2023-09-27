@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve Job</title>
+    <!-- Add any CSS styles or links to external stylesheets here -->
+</head>
+<body>
+    <header>
+        <h1>Job Details (Job Number: {{ job_number }})</h1>
+    </header>
+    <main>
+        <h2>Text Fields</h2>
+        <ul>
+            {% for field in text_fields %}
+                <li>{{ field }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Pictures</h2>
+        <ul>
+            {% for picture in pictures %}
+                <li><img src="{{ url_for('static', filename=picture) }}" alt="Job Picture"></li>
+            {% endfor %}
+        </ul>
+    </main>
+    <footer>
+        <!-- Add footer content here -->
+    </footer>
+</body>
+</html>

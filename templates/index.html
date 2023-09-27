@@ -5,10 +5,9 @@
     <meta charset="utf-8">
     <title>Express CAD Service</title>
     <!-- Reference local JavaScript files as modules -->
-    
-    <script type="module" src="{{ url_for('static', filename='stlviewer.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 
+    <script type="module" src="{{ url_for('static', filename='stlviewer.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="./static/styles.css">
 </head>
 
 <body>
@@ -19,6 +18,23 @@
     </div>
 
     <h1>Express CAD Service</h1>
+    
+    <!-- Login Button -->
+    <a href="{{ url_for('login') }}" class="login-button">Login</a>
+
+    <!-- User Login Form (Hidden by Default) -->
+    <div id="user-login-form" style="display: none;">
+        <h2>User Login</h2>
+        <form id="user-login">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="pin">PIN:</label>
+            <input type="password" id="pin" name="pin" required><br>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
     <!-- File Upload Form -->
     <form id="upload-form">
