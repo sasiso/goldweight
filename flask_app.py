@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import secrets
 import datetime
 import os
+import json
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.secret_key = secrets.token_hex(24)
@@ -104,29 +105,35 @@ def get_client_id():
 @app.route("/submit_job", methods=['POST'])
 @login_required
 def submit_job():
-   if request.method == 'POST':
-      # Generate a unique job number based on client ID, date, and timestamp
-      client_id = get_client_id()  # Implement this function to get the client's ID
-      job_number = generate_unique_job_number(client_id)
+    if request.method == 'POST':
+        # Generate a unique job number based on client ID, date, and timestamp
+        client_id = get_client_id()  # Implement this function to get the client's ID
+        job_number = generate_unique_job_number(client_id)
 
+        # Create a folder for the job data
+        job_folder = os.path.join(app.config['UPLOAD_FOLDER'], job_number)
+        os.makedirs(job_folder)
 
-      # Create a folder for the job data
-      job_folder = os.path.join(app.config['UPLOAD_FOLDER'], job_number)
-      os.makedirs(job_folder)
+        # Store text fields in a dictionary to maintain order
+        text_fields = {}
 
-      # Save text fields to a text file
-      with open(os.path.join(job_folder, 'text_fields.txt'), 'w') as text_file:
-            for field_name, field_value in request.form.items():
-               text_file.write(f"{field_name}: {field_value}\n")
+        # Save text fields to a JSON file
+        text_fields_json_path = os.path.join(job_folder, 'text_fields.json')
+        for field_name, field_value in request.form.items():
+            text_fields[field_name] = field_value
 
-      # Save uploaded pictures to the job folder
-      for uploaded_file in request.files.getlist('pictures'):
+        with open(text_fields_json_path, 'w') as json_file:
+            json.dump(text_fields, json_file, indent=4)
+
+        # Save uploaded pictures to the job folder
+        for uploaded_file in request.files.getlist('pictures'):
             if uploaded_file.filename != '':
-               picture_path = os.path.join(job_folder, uploaded_file.filename)
-               uploaded_file.save(picture_path)
+                picture_path = os.path.join(job_folder, uploaded_file.filename)
+                uploaded_file.save(picture_path)
 
-      flash(f"Job submitted successfully. Job number: {job_number}", 'success')
-      return redirect(url_for('dashboard'))
-   return render_template('dashboard.html')
+        flash(f"Job submitted successfully. Job number: {job_number}", 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('dashboard.html')
 if __name__ == "__main__":
     app.run(debug=True)

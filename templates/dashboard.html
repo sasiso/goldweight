@@ -55,7 +55,7 @@
                 <div>
                 <!-- File Upload for Pictures (up to 10 images) -->      
                 <h3>please upload multiple pictures</h3>          
-                <input type="file" id="fileInput" name="pictures[]" multiple accept="image/*" onchange="displayThumbnails()">
+                <input type="file"  name="pictures" multiple accept="image/*" onchange="displayThumbnails()">
                 </div>
 
                 <div id="thumbnails">
@@ -93,7 +93,7 @@
             const thumbnails = document.getElementById("thumbnails");
             thumbnails.innerHTML = ""; // Clear previous thumbnails
 
-            const files = document.querySelector('input[name="pictures[]"]').files;
+            const files = document.querySelector('input[name="pictures"]').files;
             for (let i = 0; i < files.length; i++) {
                 if (files[i].type.startsWith("image/")) {
                     const thumbnail = document.createElement("img");
