@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "${workspaceFolder}/flask_app.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/flask_app.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "pythonPath": "${workspaceFolder}/.venv/scripts/python.exe"
+        }
+    ]
+}
