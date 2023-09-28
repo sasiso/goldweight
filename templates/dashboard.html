@@ -1,6 +1,7 @@
 <!-- Updated dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>Welcome to Your Dashboard</h1>
@@ -32,7 +34,7 @@
     </nav>
     <main>
         <section id="job-retrieval">
-            <h2>Retrieve a Job</h2>
+            <h2>Retrieve your exsting job </h2>
             <form method="POST" action="/retrieve_job">
                 <label for="job_number">Enter Job Number:</label>
                 <input type="text" id="job_number" name="job_number" required>
@@ -44,17 +46,22 @@
             <h2>Submit a Job</h2>
             <form method="POST" action="/submit_job" enctype="multipart/form-data">
                 <!-- Text Fields for Job Submission -->
+                <h3>please add as much detail as you can</h3>   
                 <div id="text-fields">
                     <!-- You can add up to 20 text fields dynamically using JavaScript -->
                 </div>
-                
-                <!-- File Upload for Pictures (up to 10 images) -->
-                <input type="file" name="pictures[]" multiple accept="image/*" onchange="displayThumbnails()">
+                <button type="button" onclick="addTextField()">Add job details</button>
+            <br></br>
+                <div>
+                <!-- File Upload for Pictures (up to 10 images) -->      
+                <h3>please upload multiple pictures</h3>          
+                <input type="file" id="fileInput" name="pictures[]" multiple accept="image/*" onchange="displayThumbnails()">
+                </div>
+
                 <div id="thumbnails">
                     <!-- Thumbnails for uploaded pictures will appear here -->
                 </div>
-
-                <button type="button" onclick="addTextField()">Add Key-Value Pair</button>
+                <br></br>
                 <button type="submit">Submit Job</button>
             </form>
         </section>
@@ -71,9 +78,10 @@
             if (textFieldCount < 20) {
                 const textField = document.createElement("div");
                 textField.classList.add("key-value-pair");
-                textField.innerHTML = `
-                    <input type="text" name="key_${textFieldCount}" placeholder="Key">
-                    <input type="text" name="value_${textFieldCount}" placeholder="Value">
+
+                textField.innerHTML = `                    
+                    <textarea name="key_${textFieldCount}" rows="3" style="height: calc(33% - 10px);" placeholder="e.g. ring size"></textarea>
+                    <textarea name="value_${textFieldCount}" rows="3" style="width: 33%;" placeholder="Add free text"></textarea>
                 `;
                 document.getElementById("text-fields").appendChild(textField);
                 textFieldCount++;
@@ -103,4 +111,5 @@
         };
     </script>
 </body>
+
 </html>
