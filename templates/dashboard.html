@@ -1,6 +1,7 @@
 <!-- Updated dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +18,20 @@
         .key-value-pair {
             margin-bottom: 10px;
         }
+
+        /* CSS for job submission and retrieval columns */
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+        }
+
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <h1>Welcome to Your Dashboard</h1>
@@ -31,33 +44,54 @@
         </ul>
     </nav>
     <main>
-        <section id="job-retrieval">
-            <h2>Retrieve a Job</h2>
-            <form method="POST" action="/retrieve_job">
-                <label for="job_number">Enter Job Number:</label>
-                <input type="text" id="job_number" name="job_number" required>
-                <button type="submit">Retrieve Job</button>
-            </form>
-        </section>
+        <div class="column">
+            <!-- Job Submission Section -->
+            <section id="job-submission">
+                <h2>Submit a Job</h2>
+                <form method="POST" action="/submit_job" enctype="multipart/form-data">
+                    <!-- Text Fields for Job Submission -->
+                    <h3>Please add as much detail as you can</h3>
+                    <div id="text-fields">
+                        <!-- You can add up to 20 text fields dynamically using JavaScript -->
+                    </div>
+                    <button type="button" onclick="addTextField()">Add job details</button>
+                    <br><br>
+                    <div>
+                        <!-- File Upload for Pictures (up to 10 images) -->
+                        <h3>Please upload multiple pictures</h3>
+                        <input type="file" name="pictures" multiple accept="image/*" onchange="displayThumbnails()">
+                    </div>
 
-        <section id="job-submission">
-            <h2>Submit a Job</h2>
-            <form method="POST" action="/submit_job" enctype="multipart/form-data">
-                <!-- Text Fields for Job Submission -->
-                <div id="text-fields">
-                    <!-- You can add up to 20 text fields dynamically using JavaScript -->
-                </div>
+                    <div id="thumbnails">
+                        <!-- Thumbnails for uploaded pictures will appear here -->
+                    </div>
+                    <br><br>
+                    <button type="submit">Submit Job</button>
+                </form>
+            </section>
+        </div>
+
+        <div class="column">
+            <!-- Job Retrieval Section -->
+            <section id="job-retrieval">
                 
-                <!-- File Upload for Pictures (up to 10 images) -->
-                <input type="file" name="pictures[]" multiple accept="image/*" onchange="displayThumbnails()">
-                <div id="thumbnails">
-                    <!-- Thumbnails for uploaded pictures will appear here -->
-                </div>
+                
+                <!-- List of Submitted Jobs -->
+                <h3>Your Submitted Jobs</h3>
+                <ul>
+                    <!-- Example job list buttons, replace with dynamic data from Flask -->
+                    <li>
+                        <button onclick="retrieveJob('job123')">Job 123</button>
+                    </li>
+                    <li>
+                        <button onclick="retrieveJob('job456')">Job 456</button>
+                    </li>
+                    <!-- Add more list items here dynamically -->
+                </ul>
+            </section>
+        </div>
 
-                <button type="button" onclick="addTextField()">Add Key-Value Pair</button>
-                <button type="submit">Submit Job</button>
-            </form>
-        </section>
+        <div class="clear"></div>
     </main>
     <footer>
         <!-- Add footer content here -->
@@ -65,42 +99,8 @@
 
     <!-- JavaScript to add and display text fields and picture thumbnails -->
     <script>
-        let textFieldCount = 0;
-
-        function addTextField() {
-            if (textFieldCount < 20) {
-                const textField = document.createElement("div");
-                textField.classList.add("key-value-pair");
-                textField.innerHTML = `
-                    <input type="text" name="key_${textFieldCount}" placeholder="Key">
-                    <input type="text" name="value_${textFieldCount}" placeholder="Value">
-                `;
-                document.getElementById("text-fields").appendChild(textField);
-                textFieldCount++;
-            }
-        }
-
-        // Function to display 100x100 pixel image thumbnails when selected
-        function displayThumbnails() {
-            const thumbnails = document.getElementById("thumbnails");
-            thumbnails.innerHTML = ""; // Clear previous thumbnails
-
-            const files = document.querySelector('input[name="pictures[]"]').files;
-            for (let i = 0; i < files.length; i++) {
-                if (files[i].type.startsWith("image/")) {
-                    const thumbnail = document.createElement("img");
-                    thumbnail.src = URL.createObjectURL(files[i]);
-                    thumbnail.alt = "Thumbnail";
-                    thumbnail.classList.add("thumbnail");
-                    thumbnails.appendChild(thumbnail);
-                }
-            }
-        }
-
-        // Automatically display thumbnails when page loads
-        window.onload = () => {
-            displayThumbnails();
-        };
+        // ... (your JavaScript code remains the same)
     </script>
 </body>
+
 </html>

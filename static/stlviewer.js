@@ -81,8 +81,8 @@ function updateWeightDisplay(weights) {
 function init() {
 	container = document.createElement('div');
 	document.body.appendChild(container);
-    const w = window.innerHeight /2
-    const h = window.innerHeight /2
+    const w = window.innerHeight 
+    const h = window.innerHeight 
 
 	camera = new THREE.PerspectiveCamera(35,w / h, 1, 15);
 	camera.position.set(3, 0.15, 3);
@@ -143,7 +143,7 @@ function addShadowedLight(x, y, z, color, intensity) {
 function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth/2, window.innerHeight/2);
+	renderer.setSize(window.innerWidth/1.5, window.innerHeight/1.5);
 }
 
 function animate() {
