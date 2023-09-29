@@ -5,12 +5,21 @@
     <meta charset="utf-8">
     <title>Express CAD Service</title>
     <!-- Reference local JavaScript files as modules -->
-
     <script type="module" src="{{ url_for('static', filename='stlviewer.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="./static/styles.css">
 </head>
 
 <body>
+    <!-- Add the barcode image at the top-right corner -->
+    <!-- Add the barcode image at the top-right corner -->
+    <img src="{{ url_for('static', filename='/images/barcode_whatsApp.png') }}" alt="WhatsApp Barcode"
+        style="position: absolute; top: 10px; right: 10px; width: 300px; height: auto;">
+
+    <!-- Add text below the image -->
+    <p style="position: absolute; top: 320px; right: 10px; text-align: center; font-size: 14px; color: #333;">The
+        quickest way to submit a CAD job is to scan this WhatsApp barcode and start a chat.</p>
+
+
     <div class="banner">
         <p><strong>Bug Fixes and Improvements:</strong> For any issues or suggestions, please contact us at <a
                 href="mailto:satbirsoni@gmail.com">satbirsoni@gmail.com</a> or <a
@@ -18,10 +27,11 @@
     </div>
 
     <h1>Express CAD Service</h1>
-    
+
     <!-- Login Button -->
     <a href="{{ url_for('login') }}" class="login-button">Login</a>
-
+    <br>
+    <br>
     <!-- User Login Form (Hidden by Default) -->
     <div id="user-login-form" style="display: none;">
         <h2>User Login</h2>
@@ -37,10 +47,11 @@
     </div>
 
     <!-- File Upload Form -->
+    <h3>Upload file to review and find metal weight</h3>
     <form id="upload-form">
         <input type="file" id="stl-file" accept=".stl">
     </form>
-
+    <br>
     <!-- 3D Model Display -->
     <div id="stl-container"></div>
 
@@ -54,7 +65,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             setup();
         });
-    </script>  
+    </script>
 </body>
 
 </html>

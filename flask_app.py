@@ -60,35 +60,45 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
-@app.route("/retrieve_job", methods=['POST'])
+    submitted_jobs = get_submitted_jobs()  # Get a list of submitted job numbers
+    retrieved_job = None
 
-@login_required
-def retrieve_job():
     if request.method == 'POST':
         job_number = request.form.get('job_number')
 
-        # Load data from the job folder
-        job_folder = os.path.join(app.config['UPLOAD_FOLDER'], job_number)
-        text_fields = []
-        pictures = []
+        if job_number:
+            retrieved_job = retrieve_job_details(job_number)
 
-        if os.path.exists(job_folder):
-            # Read text fields
-            text_file_path = os.path.join(job_folder, 'text_fields.txt')
-            if os.path.exists(text_file_path):
-                with open(text_file_path, 'r') as text_file:
-                    text_fields = text_file.readlines()
+    return render_template('dashboard.html', submitted_jobs=submitted_jobs, retrieved_job=retrieved_job)
 
-            # List picture files
-            picture_files = os.listdir(job_folder)
-            pictures = [f"{job_number}/{filename}" for filename in picture_files]
+@app.route("/retrieve_job/<job_number>")
+@login_required
+def retrieve_job(job_number):
+    job_details = retrieve_job_details(job_number)
 
-        return render_template('retrieve_job.html', job_number=job_number, text_fields=text_fields, pictures=pictures)
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', job_details=job_details)
+
+def get_submitted_jobs():
+    # Implement this function to get a list of submitted job numbers for the current user
+    # You can retrieve it from a database or any other data source
+    # For this example, let's return a static list of job numbers
+    return ['job123', 'job456', 'job789']
+
+def retrieve_job_details(job_number):
+    # Implement this function to retrieve job details based on the job number
+    # You can load the details from a database or other data source
+    # For this example, let's return a dictionary with sample job details
+    job_details = {
+        'job_number': job_number,
+        'client_id': 'Client123',
+        'description': 'Sample job description',
+        'status': 'In Progress',
+        # Add more job details as needed
+    }
+    return job_details
 
 def generate_unique_job_number(client_id):
     # Generate a unique job number based on client ID, date, and timestamp
