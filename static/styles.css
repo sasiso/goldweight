@@ -5,3 +5,33 @@
     width: 50%;
     height: 50%;
 }
+
+#weight-display {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 10px; /* Optional margin to provide some space from the edges */
+    background-color: #ffffff; /* Optional background color */
+    padding: 10px; /* Optional padding to add some space around the content */
+    border: 1px solid #000; /* Optional border for the element */
+  }
+
+  #whatsapp-button {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 5px; /* Optional padding for spacing */
+    background-color: #25d366; /* Optional background color */
+    color: #fff; /* Optional text color */
+    text-decoration: none; /* Optional to remove underline */
+    border: none; /* Optional to remove border */
+    cursor: pointer; /* Optional cursor style */
+    z-index: 999; /* Optional z-index to control layering */
+  }
+
+  #whatsapp-button img {
+    height: 15px; /* Set the height to 15 pixels to maintain aspect ratio */
+    width: auto; /* Auto width to maintain aspect ratio */
+    vertical-align: middle; /* Center the image vertically */
+    margin-right: 5px; /* Optional spacing between image and text */
+  }

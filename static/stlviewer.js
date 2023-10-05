@@ -56,26 +56,16 @@ function calculateGoldWeight(geometry) {
 // Function to update the weight display table
 function updateWeightDisplay(weights) {
 	const weightDisplay = document.getElementById('weight-display');
-	weightDisplay.innerHTML = ''; // Clear previous content
+	let beautifulString = "";
+	for (const person in weights) {
+		if (weights.hasOwnProperty(person)) {
+		  beautifulString += `${person}: ${weights[person]}\n`;
+		}
+	  }
+	  
+	weightDisplay.innerHTML = beautifulString; // Clear previous content
 
-	// Create and populate the weight table
-	const table = document.createElement('table');
-	table.border = '1';
-	table.innerHTML = `
-                <thead>
-                    <tr>
-                        <th>Karat</th>
-                        <th>Gold Weight (grams)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${Object.keys(weights)
-			.map(karat => `<tr><td>${karat}</td><td>${weights[karat]}</td></tr>`)
-			.join('')}
-                </tbody>
-            `;
 
-	weightDisplay.appendChild(table);
 }
 
 function init() {
